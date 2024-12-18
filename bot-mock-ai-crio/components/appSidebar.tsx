@@ -6,7 +6,8 @@ import {
     SidebarFooter,
     SidebarHeader,
     SidebarMenuButton,
-    SidebarSeparator
+    SidebarSeparator,
+    SidebarGroupLabel
 } from "@/components/ui/sidebar";
 import {
     DropdownMenu,
@@ -16,7 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { SquarePen, FileClock, SunMoon } from 'lucide-react';
 import { useTheme } from "next-themes";
-import { useConvoStore } from "@/stores/useConvoStore";
+import { useConvoStore, useConvos } from "@/stores/useConvoStore";
 import Link from "next/link";
 import { memo, useCallback, useState, useEffect } from "react";
 
@@ -52,7 +53,10 @@ const ThemeDropdown = function ThemeDropdown() {
 };
 
 function ConversationList({ conversations }: { conversations: { id: string; title: string }[] }) {
-    if (!conversations.length) {
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
+
+    if (!mounted || !conversations.length) {
         return (
             <div className="flex flex-col w-full h-full items-center justify-center gap-2 text-sm opacity-50 [&>svg]:size-4 [&>svg]:shrink-0">
                 <span>Past convos will show here</span>
@@ -63,7 +67,7 @@ function ConversationList({ conversations }: { conversations: { id: string; titl
         <>
             {conversations.map(convo =>
                 <SidebarMenuButton asChild key={convo.id}>
-                    <Link href={`/chat?id=${convo.id}`}>
+                    <Link href={`/chat?id=${convo.id}`} className="truncate">
                         {convo.title}
                     </Link>
                 </SidebarMenuButton>
@@ -73,21 +77,25 @@ function ConversationList({ conversations }: { conversations: { id: string; titl
 };
   
 export function AppSidebar() {
-    const conversations = useConvoStore(state => state.getAllConvoIds)();
+    const { convoIds } = useConvos();
+    const conversations = convoIds();
 
     return (
         <Sidebar>
 
             <SidebarHeader>
-                <SidebarMenuButton>
-                    New Chat
-                    <SquarePen className="ml-auto" />
+                <SidebarMenuButton asChild>
+                    <Link href="/">
+                        New Chat
+                        <SquarePen className="ml-auto" />
+                    </Link>
                 </SidebarMenuButton>
             </SidebarHeader>
 
             <SidebarSeparator />
 
-            <SidebarContent>
+            <SidebarGroupLabel className="p-4">Past Conversations</SidebarGroupLabel>
+            <SidebarContent className="p-2 gap-1">
                 <ConversationList conversations={conversations} />
             </SidebarContent>
 

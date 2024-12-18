@@ -114,3 +114,13 @@ export const useConvoStore = create<ConvoStoreState>()(
         }
     ),
 );
+
+export function useConvos() {
+    const convos = useConvoStore(state => state.convos);
+    const convoIds = useConvoStore(state => state.getAllConvoIds);
+
+    return {
+        convoIds,
+        convos
+    }
+};

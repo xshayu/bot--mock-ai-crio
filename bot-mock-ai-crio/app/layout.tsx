@@ -45,7 +45,7 @@ export default function RootLayout({
             <AppSidebar />
             <main className="w-full">
 
-              <header className="flex items-center justify-between h-12 px-4 use-primary-font sticky top-0 bg-primary/5 backdrop-blur-sm border-b">
+              <header className="flex items-center justify-between h-[--header-h] px-4 use-primary-font sticky top-0 bg-primary/5 backdrop-blur-sm border-b">
                 <SidebarTrigger />
                 <h1 className="font-bold">
                   Bot AI
