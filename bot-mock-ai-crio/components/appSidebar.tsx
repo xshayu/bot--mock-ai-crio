@@ -73,7 +73,7 @@ function ConversationList({ conversations }: { conversations: { id: string; titl
 };
   
 export function AppSidebar() {
-    const conversations = useConvoStore(state => state.convoIds);
+    const conversations = useConvoStore(state => state.getAllConvoIds)();
 
     return (
         <Sidebar>

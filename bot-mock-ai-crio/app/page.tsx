@@ -8,8 +8,8 @@ export default function Home() {
 
   return (
     <>
-      Hi
-    {/* <ChatInitiator prompts={prompts} /> */}
+     
+    <ChatInitiator prompts={prompts} />
     </>
   );
 }

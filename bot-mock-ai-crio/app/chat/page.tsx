@@ -4,7 +4,7 @@ import { useConvoStore } from "@/stores/useConvoStore";
 import sampleData from '@/sampleData.json';
 import type { Prompt } from "@/models";
 import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 const prompts = sampleData as Prompt[];
 
 
