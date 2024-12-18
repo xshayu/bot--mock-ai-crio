@@ -1,6 +1,6 @@
 export interface BaseMessage {
     text: string;
-    timestamp: string; // dd/MM/yyyy_HH:mm:ss
+    timestamp: string; // DD/MM/YYYY_HH:mm:ss:SSS
 };
 
 export interface ModelMessage extends BaseMessage {
@@ -14,8 +14,10 @@ export interface UserMessage extends BaseMessage {
 
 export type ChatMessage = ModelMessage | UserMessage;
 
+export type Rating = 0 | 1 | 2 | 3 | 4 | 5;
+
 export interface Review {
-    rating?: 0 | 1 | 2 | 3 | 4 | 5;
+    rating?: Rating;
     feedback?: string;
 };
 
@@ -23,7 +25,8 @@ export interface Conversation {
     review?: Review;
     title: string; // first message text
     id: string; // first message timestamp
-    chat: ChatMessage[]
+    chat: ChatMessage[];
+    finished: boolean;
 };
 
 export interface Prompt {

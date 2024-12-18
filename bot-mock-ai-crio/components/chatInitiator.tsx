@@ -3,12 +3,10 @@
 import { useConvoStore } from '@/stores/useConvoStore';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
-import { useState, useEffect, FormEventHandler } from 'react';
+import { useState, useEffect } from 'react';
 import type { Prompt } from '@/models';
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from './ui/button';
-import { SendHorizonal, LoaderCircle } from 'lucide-react';
-import type { KeyboardEvent } from 'react';
+import ChatForm from './chatForm';
+import { LoaderCircle } from 'lucide-react';
 
 interface ChatInitiatorProps {
     prompts: Prompt[];
@@ -33,27 +31,10 @@ export default function ChatInitiator({ prompts }: ChatInitiatorProps) {
         const newConversation = createChat({
             by: 'user',
             text,
-            timestamp: dayjs().format('DD/MM/YYYY_HH:mm:ss')
+            timestamp: dayjs().format('DD/MM/YYYY_HH:mm:ss:SSS')
         });
 
         router.push(`/chat?id=${newConversation.id}`);
-    };
-
-    const handleFormSubmit: FormEventHandler<HTMLFormElement> = (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        const query = formData.get('query') as string;
-        if (query?.length) handleInitiation(query);
-    };
-
-    const handleTextAreaEnter = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key == 'Enter') {
-            const text = e.currentTarget.value.trim();
-            if (text && text.length) {
-                e.preventDefault();
-                handleInitiation(text);
-            }
-        }
     };
 
     return (
@@ -80,12 +61,7 @@ export default function ChatInitiator({ prompts }: ChatInitiatorProps) {
                     }
                 </div>
             }
-            <form className="p-2 flex gap-2 w-full" onSubmit={handleFormSubmit}>
-                <Textarea onKeyDown={handleTextAreaEnter} name="query" placeholder="Enter your question" className="resize-none" required />
-                <Button title="Ask query" type="submit">
-                    <SendHorizonal />
-                </Button>
-            </form>
+            <ChatForm onSubmit={handleInitiation} />
         </>
     )
 }

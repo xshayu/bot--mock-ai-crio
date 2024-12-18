@@ -39,7 +39,8 @@ export const useConvoStore = create<ConvoStoreState>()(
                 const newConversation = {
                     title,
                     id,
-                    chat: [message]
+                    chat: [message],
+                    finished: false
                 } as Conversation;
 
                 set((state) => ({
@@ -50,6 +51,7 @@ export const useConvoStore = create<ConvoStoreState>()(
             },
 
             loadConvo: (id) => {
+                console.log('this convo has been loaded');
                 return get().convos.find((convo) => convo.id === id);
             },
 
@@ -61,7 +63,8 @@ export const useConvoStore = create<ConvoStoreState>()(
                     const updatedConvos = [...state.convos];
                     updatedConvos[convoIndex] = {
                         ...updatedConvos[convoIndex],
-                        review: review || updatedConvos[convoIndex].review
+                        review: review || updatedConvos[convoIndex].review,
+                        finished: true
                     };
 
                     if (onSave) {
@@ -73,6 +76,8 @@ export const useConvoStore = create<ConvoStoreState>()(
             },
 
             newMessage: (conversation, message) => {
+                console.log('New message: ', message);
+
                 const updatedConversation = {
                     ...conversation,
                     chat: [...conversation.chat, message]
@@ -115,12 +120,14 @@ export const useConvoStore = create<ConvoStoreState>()(
     ),
 );
 
-export function useConvos() {
+export function useConvos() { // this seperation was necessary to avoid infinite rerenders
     const convos = useConvoStore(state => state.convos);
     const convoIds = useConvoStore(state => state.getAllConvoIds);
+    const loadConvo = useConvoStore(state => state.loadConvo);
 
     return {
         convoIds,
-        convos
+        convos,
+        loadConvo
     }
 };
