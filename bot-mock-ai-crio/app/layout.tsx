@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/themeProvider";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/appSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Ubuntu, Open_Sans } from 'next/font/google';
 import Image from "next/image";
