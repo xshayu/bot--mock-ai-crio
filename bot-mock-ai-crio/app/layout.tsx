@@ -42,6 +42,7 @@ export default function RootLayout({
           <SidebarProvider>
             <AppSidebar />
             <main className="w-full">
+
               <header className="flex items-center justify-between h-12 px-4 font-[family-name:var(--primary-font)] sticky top-0 bg-primary/5 backdrop-blur-sm border-b">
                 <SidebarTrigger />
                 <h1 className="font-bold">
@@ -54,7 +55,9 @@ export default function RootLayout({
                   src="https://avatars.githubusercontent.com/u/45749740?s=400&v=4" 
                 />
               </header>
+
               {children}
+              
             </main>
           </SidebarProvider>
         </ThemeProvider>

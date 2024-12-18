@@ -16,20 +16,22 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { SquarePen, FileClock, SunMoon } from 'lucide-react';
 import { useTheme } from "next-themes";
-
   
 export function AppSidebar() {
     const { setTheme } = useTheme();
 
     return (
         <Sidebar>
+
             <SidebarHeader>
                 <SidebarMenuButton>
                     New Chat
                     <SquarePen className="ml-auto" />
                 </SidebarMenuButton>
             </SidebarHeader>
+
             <SidebarSeparator />
+
             <SidebarContent>
                 <div className="flex flex-col w-full h-full items-center justify-center gap-2 text-sm opacity-50 [&>svg]:size-4 [&>svg]:shrink-0">
                     <span>
@@ -38,7 +40,9 @@ export function AppSidebar() {
                     <FileClock />
                 </div>
             </SidebarContent>
+
             <SidebarSeparator />
+            
             <SidebarFooter>
                 <SidebarMenuButton>
                     All Past Conversations
