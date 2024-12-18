@@ -15,9 +15,9 @@ import {
     DropdownMenuContent,
     DropdownMenuItem
 } from '@/components/ui/dropdown-menu';
-import { SquarePen, FileClock, SunMoon } from 'lucide-react';
+import { SquarePen, FileClock, SunMoon, LoaderCircle } from 'lucide-react';
 import { useTheme } from "next-themes";
-import { useConvoStore, useConvos } from "@/stores/useConvoStore";
+import { useConvos } from "@/stores/useConvoStore";
 import Link from "next/link";
 import { memo, useCallback, useState, useEffect } from "react";
 
@@ -56,7 +56,13 @@ function ConversationList({ conversations }: { conversations: { id: string; titl
     const [mounted, setMounted] = useState(false);
     useEffect(() => setMounted(true), []);
 
-    if (!mounted || !conversations.length) {
+    if (!mounted) {
+        return (
+            <div className="flex flex-col items-center justify-center w-full h-full">
+                <LoaderCircle className="animate-spin" />
+            </div>
+        )
+    } else if (!conversations.length) {
         return (
             <div className="flex flex-col w-full h-full items-center justify-center gap-2 text-sm opacity-50 [&>svg]:size-4 [&>svg]:shrink-0">
                 <span>Past convos will show here</span>
@@ -65,6 +71,7 @@ function ConversationList({ conversations }: { conversations: { id: string; titl
         )
     } else return (
         <>
+
             {conversations.map(convo =>
                 <SidebarMenuButton asChild key={convo.id}>
                     <Link href={`/chat?id=${convo.id}`} className="truncate">

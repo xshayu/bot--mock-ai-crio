@@ -43,7 +43,7 @@ export default function RootLayout({
         >
           <SidebarProvider>
             <AppSidebar />
-            <main className="w-full">
+            <div className="w-full">
 
               <header className="flex items-center justify-between h-[--header-h] px-4 use-primary-font sticky top-0 bg-primary/5 backdrop-blur-sm border-b">
                 <SidebarTrigger />
@@ -60,7 +60,7 @@ export default function RootLayout({
 
               {children}
               
-            </main>
+            </div>
           </SidebarProvider>
         </ThemeProvider>
       </body>
