@@ -25,3 +25,9 @@ export interface Conversation {
     id: string; // first message timestamp
     chat: ChatMessage[]
 };
+
+export interface Prompt {
+    id: number;
+    question: string;
+    response: string;
+};

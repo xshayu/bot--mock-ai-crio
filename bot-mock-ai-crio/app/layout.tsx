@@ -3,7 +3,6 @@ import { ThemeProvider } from "@/components/themeProvider";
 import { AppSidebar } from "@/components/appSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Ubuntu, Open_Sans } from 'next/font/google';
-import Image from "next/image";
 import "./globals.css";
 
 const ubuntu = Ubuntu({
@@ -28,6 +27,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  console.log('layout rerendering');
+
   return (
     <html lang="en">
       <body
@@ -43,12 +45,12 @@ export default function RootLayout({
             <AppSidebar />
             <main className="w-full">
 
-              <header className="flex items-center justify-between h-12 px-4 font-[family-name:var(--primary-font)] sticky top-0 bg-primary/5 backdrop-blur-sm border-b">
+              <header className="flex items-center justify-between h-12 px-4 use-primary-font sticky top-0 bg-primary/5 backdrop-blur-sm border-b">
                 <SidebarTrigger />
                 <h1 className="font-bold">
                   Bot AI
                 </h1>
-                <Image
+                <img
                   className="h-6 w-6 rounded-full cursor-pointer"
                   title="User Avatar"
                   alt="User Avatar"

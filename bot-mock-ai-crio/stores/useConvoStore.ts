@@ -6,6 +6,10 @@ export const PAGE_LIMIT = 10;
 
 interface ConvoStoreState {
     convos: Conversation[];
+
+    // getters
+    convoIds: { id: string; title: string; }[];
+    
     // helper functions
     getConvoId: (conversation: Conversation) => string;
     getAllConvos: (page?: number, rating?: number) => Conversation[];
@@ -28,6 +32,11 @@ export const useConvoStore = create<ConvoStoreState>()(
             getAllConvos: (page = 1, rating) => {
                 const filteredConvos = rating ? get().convos : get().convos.filter((conv) => conv.review?.rating && (conv.review.rating >= rating!));
                 return filteredConvos.slice((page - 1) * PAGE_LIMIT, page * PAGE_LIMIT);
+            },
+
+            get convoIds() { // so the sidebar doesn't re-render when conversation keeps happening
+                console.log('get convo Ids has been called');
+                return get().convos.map(({ id, title }) => ({ id, title }));
             },
 
             createConvo: (message) => {
