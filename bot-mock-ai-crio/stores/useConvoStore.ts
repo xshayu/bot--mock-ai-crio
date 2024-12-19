@@ -29,7 +29,7 @@ export const useConvoStore = create<ConvoStoreState>()(
 
             getAllConvos: (page = 1, rating) => {
                 let filteredConvos = get().convos;
-                if (typeof rating == 'number' && !Number.isNaN(NaN)) {
+                if (typeof rating == 'number' && !Number.isNaN(rating)) {
                     filteredConvos = filteredConvos.filter((conv) => conv.review?.rating && (conv.review.rating >= rating!));
                 };
                 
