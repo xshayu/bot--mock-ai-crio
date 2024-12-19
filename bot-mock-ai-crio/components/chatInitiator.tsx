@@ -18,7 +18,7 @@ export default function ChatInitiator({ prompts }: ChatInitiatorProps) {
     const createConvo = useConvoStore(state => state.createConvo);
     const router = useRouter();
 
-    useEffect(() => {
+    useEffect(() => { // Getting 4 random prompts from sampleData
         const randomSet = new Set<number>();
         while (randomSet.size < 4) {
             randomSet.add(Math.floor(prompts.length * Math.random()));
@@ -50,7 +50,7 @@ export default function ChatInitiator({ prompts }: ChatInitiatorProps) {
                             <button
                                 key={prompt.id}
                                 onClick={() => handleInitiation(prompt.question)}
-                                className="rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer">
+                                className="rounded-lg shadow-sm bg-muted p-4 hover:shadow-md transition-shadow cursor-pointer">
                                 <h2 className="font-medium mb-2">
                                     {prompt.question}
                                 </h2>

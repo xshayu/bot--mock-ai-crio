@@ -1,7 +1,7 @@
 'use client';
 
 import { useConvoStore, useConvos } from "@/stores/useConvoStore";
-import { ThumbsUp, ThumbsDown, Star } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Star, LoaderCircle } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect } from 'react';
 import {
@@ -41,40 +41,46 @@ function MessageBubble({
     message: ChatMessage;
     onLike?: (liked: -1 | 0 | 1) => void;
 }) {
-    const [showActions, setShowActions] = useState(false);
     
     const isUser = message.by === 'user';
-    const bubbleClass = isUser ? 'bg-primary text-primary-foreground' : 'bg-muted';
+    const avatar = isUser ?
+        'https://avatars.githubusercontent.com/u/45749740?s=400&v=4'
+        : 'https://s3-alpha-sig.figma.com/img/4b1c/47d6/93bc8af758e2de31a7de8493b52750af?Expires=1735516800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=ENA~YSaf9THN5paaRkbIJjELW2iNRsBCFvM-id9EjLB-Fs1pUHNkN8RIq8zGwKNvhzTv4e5rR1zPKlfdODJwV~bRvYA1Aze26PIlbPAHL9MV9e~sc0igwzro-nv1NkUQBw0ST778qQmxh9i3iVvnpWjJX69wj3nRsHY~03aWo6K37hOU~ecwtfU7MUgHOxVGkdXl9W~im7LPOZzkU4nGS0hsmLwB-FFPStf887iGCx6cfWZU2R5FknqYqZZkkVhr12pdzT5-6lvPGKmY4U0XRZGtGKxaQGxzw2Bhrhmua7QalHaTv70G9yMCFG--23DrJmJ0Vqi8hUrDzxK88FGMnw__';
+    
 
     return (
         <div
-            className="relative p-4 rounded-lg max-w-[80%] mx-auto"
-            onMouseEnter={() => setShowActions(true)}
-            onMouseLeave={() => setShowActions(false)}
+            className={`p-4 rounded-lg max-w-[80%] mx-auto my-4 group shadow-sm ${isUser ? 'bg-secondary text-secondary-foreground' : 'bg-[var(--theme)] text-primary dark:text-secondary'}`}
         >
-            <div className={`${bubbleClass} p-4 rounded-lg`}>
-                {message.text}
-            </div>
-            {!isUser && showActions && onLike && (
-                <div className="absolute right-0 top-0 -mt-8 flex gap-2 bg-background p-2 rounded-lg shadow-lg">
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onLike(1)}
-                        className={message.liked === 1 ? 'text-green-500' : ''}
-                    >
-                        <ThumbsUp className="h-4 w-4" />
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onLike(-1)}
-                        className={message.liked === -1 ? 'text-red-500' : ''}
-                    >
-                        <ThumbsDown className="h-4 w-4" />
-                    </Button>
+            <div className={`border-b-[0.5px] pb-6 flex gap-4 ${isUser ? 'border-b-muted-foreground' : 'border-b-primary dark:border-b-secondary'}`}>
+                <img src={avatar} className="h-8 w-8 rounded-full object-cover shadow-sm" />
+                <div>
+                    <h2 className="font-bold">{isUser ? 'You' : 'Bot AI'}</h2>
+                    <p>{message.text}</p>
                 </div>
-            )}
+            </div>
+            <div className={`pt-2 flex items-center justify-between text-xs ${isUser ? 'text-muted-foreground' : ''}`}>
+                <span>
+                    {dayjs(message.timestamp, DATE_FORMATS.timestamp).format(DATE_FORMATS.display)}
+                </span>
+                {
+                    !isUser && onLike ?
+                    <span className={`gap-3 ${message.liked == 0 ? 'group-hover:inline-flex hidden' : 'inline-flex'}`}>
+                        <ThumbsUp
+                            onClick={() => onLike(message.liked < 1 ? 1 : 0)}
+                            className={`h-3 w-3 ${message.liked === 1 ? 'text-green-500' : ''}`}
+                            role="button"
+                        />
+                        <ThumbsDown
+                            onClick={() => onLike(message.liked > -1 ? -1 : 0)}
+                            className={`h-3 w-3 ${message.liked === -1 ? 'text-red-500' : ''}`}
+                            role="button"
+                        />
+                    </span>
+                    :
+                    <></>
+                }
+            </div>
         </div>
     );
 }
@@ -141,20 +147,34 @@ export default function ChatPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [showRating, setShowRating] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    console.log('Chat page rendered');
 
     const id = searchParams.get('id');
-    if (!id || id.length == 0) { // If id isn't present, redirect to new chat
-        router.push('/');
-    };
+    const conversation = id ? loadConvo(id!) : null;
 
-    const conversation = loadConvo(id!);
-    if (!conversation) {
-        router.push('/');
-        return null;
-    };
+    useEffect(() => {
+        if (!id || id.length === 0 || !conversation) {
+            router.push('/');
+            return;
+        } else if (isLoading) { // So there's no flash of loading if fast-loads
+            const timer = setTimeout(() => {
+                setIsLoading(false);
+            }, 100);
+    
+            return () => clearTimeout(timer);
+        }
+
+    }, [id, conversation, router]);
 
     useEffect(() => { // Initial response by AI if this is a fresh chat
-        if (conversation.chat.length === 1 && conversation.chat[0].by === 'user') {
+        if (!isLoading && !conversation) {
+            router.push('/');
+            return;
+        }
+
+        if (conversation && conversation.chat.length === 1 && conversation.chat[0].by === 'user') {
             const userQuestion = conversation.chat[0].text;
             const response = responseOnNewQuestion(userQuestion);
 
@@ -167,7 +187,15 @@ export default function ChatPage() {
             
             newMessage(conversation, modelMessage);
         }
-    }, [conversation.id]);
+    }, [conversation, newMessage]);
+
+    if (isLoading || !conversation) {
+        return (
+            <main className="page-height flex items-center justify-center">
+                <LoaderCircle className="animate-spin" />
+            </main>
+        );
+    }
 
     const handleNewMessage = (text: string) => {
         const userMessage: ChatMessage = {
@@ -176,7 +204,7 @@ export default function ChatPage() {
             timestamp: dayjs().format(DATE_FORMATS.timestamp)
         };
 
-        let updatedConvo = newMessage(conversation, userMessage);
+        const updatedConvo = newMessage(conversation, userMessage);
 
         setTimeout(() => { // Mocking an AI response, later could make it look streamed like in chatGPT
             const modelMessage: ChatMessage = {
@@ -201,7 +229,7 @@ export default function ChatPage() {
     };
 
     return (
-        <main className="container page-height px-4 pb-1 flex flex-col justify-end">
+        <main className="container page-height px-4 pb-1 flex flex-col justify-end overflow-hidden">
             <div className="flex-1 overflow-y-auto spacing-y-4">
                 {conversation.chat.map((message) => (
                     <MessageBubble
@@ -213,21 +241,22 @@ export default function ChatPage() {
                     />
                 ))}
             </div>
-            <div className="sticky bottom-0 bg-background p-4 border-t">
+            <div className="md:px-4 py-2 border-t border-muted-foreground">
                 {
                     conversation.finished ? 
                     <>
-                        <div className="h-6 overflow-y-auto">
+                        <div className="overflow-y-auto text-sm">
+                            <h2 className="font-semibold">Review</h2>
                             {conversation.review?.feedback ?
                                 <p>{conversation.review.feedback}</p>
                                 :
                                 <p className="text-center">No feedback.</p>
                             }
                         </div>
-                        <div className="p-4 flex items-center justify-center">
+                        <div className="flex items-center gap-1 pt-1">
                             {conversation.review?.rating ?
                                 Array.from({length: conversation.review.rating}).map((_, key) =>
-                                    <Star key={key} className="h-6 w-6 fill-yellow-400 text-yellow-400" />
+                                    <Star key={key} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                                 )                                    
                                 :
                                 <span>No rating.</span>
@@ -237,7 +266,7 @@ export default function ChatPage() {
                     :
                     <>
                         <ChatForm onSubmit={handleNewMessage} />
-                        <button onClick={() => setShowRating(true)} className="text-xs py-2 underline text-center hover:brightness-125 transition-all">
+                        <button onClick={() => setShowRating(true)} className="text-xs w-full underline text-center hover:brightness-125 transition-all">
                             End conversation and submit feedback.
                         </button>
                     </>

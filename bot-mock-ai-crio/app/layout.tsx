@@ -3,6 +3,7 @@ import { ThemeProvider } from "@/components/themeProvider";
 import { AppSidebar } from "@/components/appSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Ubuntu, Open_Sans } from 'next/font/google';
+import Link from 'next/link';
 import "./globals.css";
 
 const ubuntu = Ubuntu({
@@ -28,8 +29,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  console.log('layout rerendering');
-
   return (
     <html lang="en">
       <body
@@ -47,9 +46,9 @@ export default function RootLayout({
 
               <header className="flex items-center justify-between h-[--header-h] px-4 use-primary-font sticky top-0 bg-primary/5 backdrop-blur-sm border-b">
                 <SidebarTrigger />
-                <h1 className="font-bold">
+                <Link className="font-bold" href="/">
                   Bot AI
-                </h1>
+                </Link>
                 <img
                   className="h-6 w-6 rounded-full cursor-pointer"
                   title="User Avatar"

@@ -10,7 +10,7 @@ interface ChatFormProps {
     disabled?: boolean;
 }
 
-export default function ChatForm({ disabled = false, onSubmit = (text: string) => { return } }: ChatFormProps) {
+export default function ChatForm({ disabled = false, onSubmit = (text: string) => { console.log(text); return } }: ChatFormProps) {
 
     const handleFormSubmit: FormEventHandler<HTMLFormElement> = (e) => {
         e.preventDefault();
@@ -40,7 +40,7 @@ export default function ChatForm({ disabled = false, onSubmit = (text: string) =
                 name="query"
                 placeholder="Enter your question"
                 disabled={disabled}
-                className="resize-none"
+                className="resize-none bg-secondary"
                 required
             />
             <Button size="icon" title="Ask query" type="submit" disabled={disabled}>
