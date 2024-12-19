@@ -3,6 +3,17 @@ Bot AI assignment of crio. [Here's the assignment instructions link.](https://do
 
 Done by Ayush Wardhan. In case this interests you, check out my actual github [here](https://github.com/xylarshayu). Thanks.
 
+## Contents
+
+- [Getting Started](#getting-started)
+- [Choices made](#choices-made)
+  - [Technical choices made](#technical-choices-made)
+    - [Frameworks & Libraries](#frameworks--libraries)
+    - [Performance Optimizations](#performance-optimizations)
+  - [Design choices made](#design-choices-made)
+    - [Architecture](#architecture)
+- [Things left out](#things-left-out)
+
 ## Getting Started
 
 First, navigate to the Next.js project folder, and install dependencies.
