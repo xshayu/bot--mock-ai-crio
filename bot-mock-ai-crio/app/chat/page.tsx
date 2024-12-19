@@ -1,7 +1,7 @@
 'use client';
 
 import { useConvoStore, useConvos } from "@/stores/useConvoStore";
-import { ThumbsUp, ThumbsDown, Star, SendHorizonal, LoaderCircle } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Star } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect } from 'react';
 import {
@@ -16,8 +16,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import dayjs from "dayjs";
+import { dayjs } from '@/lib/utils';
 import ChatForm from "@/components/chatForm";
+import { DATE_FORMATS } from "@/models";
  
 import sampleData from '@/sampleData.json';
 import type { Prompt, ChatMessage, Rating } from "@/models";
@@ -87,7 +88,7 @@ function RatingDialog({
     onClose: () => void;
     onSubmit: (rating: Rating, feedback: string) => void;
 }) {
-    const [rating, setRating] = useState<Rating>(0);
+    const [rating, setRating] = useState<Rating>();
     const [feedback, setFeedback] = useState('');
     
     return (
@@ -108,7 +109,7 @@ function RatingDialog({
                             size="sm"
                             onClick={() => setRating(value as Rating)}
                         >
-                            <Star className={`h-6 w-6 ${rating >= value ? 'fill-yellow-400 text-yellow-400' : ''}`} />
+                            <Star className={`h-6 w-6 ${rating && rating >= value ? 'fill-yellow-400 text-yellow-400' : ''}`} />
                         </Button>
                     ))}
                 </div>
@@ -160,7 +161,7 @@ export default function ChatPage() {
             const modelMessage: ChatMessage = {
                 by: 'model',
                 text: response,
-                timestamp: dayjs().format('D/MM/YYYY_HH:mm:ss:SSS'),
+                timestamp: dayjs().format(DATE_FORMATS.timestamp),
                 liked: 0
             };
             
@@ -172,7 +173,7 @@ export default function ChatPage() {
         const userMessage: ChatMessage = {
             by: 'user',
             text,
-            timestamp: dayjs().format('D/MM/YYYY_HH:mm:ss:SSS')
+            timestamp: dayjs().format(DATE_FORMATS.timestamp)
         };
 
         let updatedConvo = newMessage(conversation, userMessage);
@@ -181,7 +182,7 @@ export default function ChatPage() {
             const modelMessage: ChatMessage = {
                 by: 'model',
                 text: responseOnNewQuestion(text),
-                timestamp: dayjs().add(2, 'second').format('D/MM/YYYY_HH:mm:ss:SSS'),
+                timestamp: dayjs().format(DATE_FORMATS.timestamp),
                 liked: 0
             };
             newMessage(updatedConvo, modelMessage);

@@ -2,8 +2,9 @@
 
 import { useConvoStore } from '@/stores/useConvoStore';
 import { useRouter } from 'next/navigation';
-import dayjs from 'dayjs';
+import { dayjs } from '@/lib/utils';
 import { useState, useEffect } from 'react';
+import { DATE_FORMATS } from "@/models";
 import type { Prompt } from '@/models';
 import ChatForm from './chatForm';
 import { LoaderCircle } from 'lucide-react';
@@ -14,7 +15,7 @@ interface ChatInitiatorProps {
 
 export default function ChatInitiator({ prompts }: ChatInitiatorProps) {
     const [randomPrompts, setRandomPrompts] = useState<Prompt[]>([]);
-    const createChat = useConvoStore(state => state.createConvo);
+    const createConvo = useConvoStore(state => state.createConvo);
     const router = useRouter();
 
     useEffect(() => {
@@ -28,10 +29,10 @@ export default function ChatInitiator({ prompts }: ChatInitiatorProps) {
     const handleInitiation = (text: string) => {
         if (!text || text.length == 0) return;
 
-        const newConversation = createChat({
+        const newConversation = createConvo({
             by: 'user',
             text,
-            timestamp: dayjs().format('DD/MM/YYYY_HH:mm:ss:SSS')
+            timestamp: dayjs().format(DATE_FORMATS.timestamp)
         });
 
         router.push(`/chat?id=${newConversation.id}`);

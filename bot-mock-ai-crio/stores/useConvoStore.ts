@@ -1,13 +1,12 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { Conversation, UserMessage, ChatMessage, Review } from '@/models';
-
-export const PAGE_LIMIT = 10;
+import type { Conversation, UserMessage, ChatMessage, Review, PaginatedResponse } from '@/models';
+import { PAGE_LIMIT } from '@/models';
 
 interface ConvoStoreState {
     convos: Conversation[];
     getConvoId: (conversation: Conversation) => string;
-    getAllConvos: (page?: number, rating?: number) => Conversation[];
+    getAllConvos: (page?: number, rating?: number) => PaginatedResponse;
     getAllConvoIds: () => { id: string; title: string; }[];
     createConvo: (message: UserMessage) => Conversation;
     loadConvo: (id: string) => Conversation | undefined;
@@ -26,8 +25,26 @@ export const useConvoStore = create<ConvoStoreState>()(
             },
 
             getAllConvos: (page = 1, rating) => {
-                const filteredConvos = rating ? get().convos : get().convos.filter((conv) => conv.review?.rating && (conv.review.rating >= rating!));
-                return filteredConvos.slice((page - 1) * PAGE_LIMIT, page * PAGE_LIMIT);
+                let filteredConvos = get().convos;
+                if (typeof rating == 'number' && !Number.isNaN(NaN)) {
+                    console.log('is number');
+                    filteredConvos = filteredConvos.filter((conv) => conv.review?.rating && (conv.review.rating >= rating!));
+                };
+                
+                const totalPages = Math.ceil(filteredConvos.length / PAGE_LIMIT);
+                const currPage = Math.min(Math.max(1, page), totalPages);
+                const startIdx = (currPage - 1) * PAGE_LIMIT;
+                const endIdx = startIdx + PAGE_LIMIT;
+
+                return {
+                    data: filteredConvos.slice(startIdx, endIdx),
+                    metadata: {
+                        currPage,
+                        totalPages,
+                        hasNextPage: currPage < totalPages,
+                        hasPreviousPage: currPage > 1
+                    }
+                }
             },
 
             getAllConvoIds: () => {
@@ -35,7 +52,7 @@ export const useConvoStore = create<ConvoStoreState>()(
             },
 
             createConvo: (message) => {
-                const { text: title,timestamp: id } = message;
+                const { text: title, timestamp: id } = message;
                 const newConversation = {
                     title,
                     id,
@@ -76,7 +93,6 @@ export const useConvoStore = create<ConvoStoreState>()(
             },
 
             newMessage: (conversation, message) => {
-                console.log('New message: ', message);
 
                 const updatedConversation = {
                     ...conversation,
@@ -124,10 +140,12 @@ export function useConvos() { // this seperation was necessary to avoid infinite
     const convos = useConvoStore(state => state.convos);
     const convoIds = useConvoStore(state => state.getAllConvoIds);
     const loadConvo = useConvoStore(state => state.loadConvo);
+    const getAllConvos = useConvoStore(state => state.getAllConvos);
 
     return {
         convoIds,
         convos,
-        loadConvo
+        loadConvo,
+        getAllConvos
     }
 };

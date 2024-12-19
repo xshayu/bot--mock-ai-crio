@@ -1,6 +1,13 @@
+export const DATE_FORMATS = {
+    timestamp: 'DD/MM/YYYY_HH:mm:ss:SSS',
+    display: 'D/M/YY h:mm a'
+};
+
+export const PAGE_LIMIT = 10;
+
 export interface BaseMessage {
     text: string;
-    timestamp: string; // DD/MM/YYYY_HH:mm:ss:SSS
+    timestamp: string; // DATE_FORMATS.timestamp
 };
 
 export interface ModelMessage extends BaseMessage {
@@ -14,7 +21,7 @@ export interface UserMessage extends BaseMessage {
 
 export type ChatMessage = ModelMessage | UserMessage;
 
-export type Rating = 0 | 1 | 2 | 3 | 4 | 5;
+export type Rating = 0 | 1 | 2 | 3 | 4 | 5 | undefined;
 
 export interface Review {
     rating?: Rating;
@@ -33,4 +40,14 @@ export interface Prompt {
     id: number;
     question: string;
     response: string;
+};
+
+export interface PaginatedResponse {
+    data: Conversation[];
+    metadata: {
+        currPage: number;
+        totalPages: number;
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+    }
 };
