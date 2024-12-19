@@ -72,4 +72,6 @@ const RatingDialog = memo(({
     return prevProps.isOpen === nextProps.isOpen;
 });
 
+RatingDialog.displayName = 'RatingDialog';
+
 export default RatingDialog;

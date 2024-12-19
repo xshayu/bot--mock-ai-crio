@@ -19,7 +19,7 @@ import { SquarePen, FileClock, SunMoon, LoaderCircle } from 'lucide-react';
 import { useTheme } from "next-themes";
 import { useConvos } from "@/stores/useConvoStore";
 import Link from "next/link";
-import { memo, useCallback, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 // Layout comprises of:
 // 1. Theme Dropdown
@@ -84,7 +84,7 @@ function ConversationList({ conversations }: { conversations: { id: string; titl
 };
   
 export function AppSidebar() {
-    const { convoIds } = useConvos();
+    const { convoIds } = useConvos(); // fetching only ids to avoid rerendering upon single conversation updation
     const conversations = convoIds();
 
     return (

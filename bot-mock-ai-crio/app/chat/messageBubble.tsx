@@ -60,4 +60,6 @@ const MessageBubble = memo(({
     return prevProps.message.text === nextProps.message.text;
 });
 
+MessageBubble.displayName = 'MessageBubbe';
+
 export default MessageBubble;

@@ -3,6 +3,9 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Conversation, UserMessage, ChatMessage, Review, PaginatedResponse } from '@/models';
 import { PAGE_LIMIT } from '@/models';
 
+// Storing conversations in localStorage
+// Creating helper functions for easy maintainability and ease of feature-iteration
+
 interface ConvoStoreState {
     convos: Conversation[];
     getConvoId: (conversation: Conversation) => string;
