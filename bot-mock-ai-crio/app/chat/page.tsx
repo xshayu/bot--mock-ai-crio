@@ -3,7 +3,7 @@
 import { useConvoStore, useConvos } from "@/stores/useConvoStore";
 import { ThumbsUp, ThumbsDown, Star, LoaderCircle } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo, useCallback, useMemo, useRef } from 'react';
 import {
     AlertDialog,
     AlertDialogContent,
@@ -41,7 +41,7 @@ function MessageBubble({
     message: ChatMessage;
     onLike?: (liked: -1 | 0 | 1) => void;
 }) {
-    
+    console.log('message bubble rendered');
     const isUser = message.by === 'user';
     const avatar = isUser ?
         'https://avatars.githubusercontent.com/u/45749740?s=400&v=4'
@@ -50,7 +50,7 @@ function MessageBubble({
 
     return (
         <div
-            className={`p-4 rounded-lg max-w-[80%] mx-auto my-4 group shadow-sm ${isUser ? 'bg-secondary text-secondary-foreground' : 'bg-[var(--theme)] text-primary dark:text-secondary'}`}
+            className={`p-4 rounded-lg max-w-[80%] mx-auto my-4 group shadow-md ${isUser ? 'bg-secondary text-secondary-foreground' : 'bg-[var(--theme)] text-primary dark:text-secondary'}`}
         >
             <div className={`border-b-[0.5px] pb-6 flex gap-4 ${isUser ? 'border-b-muted-foreground' : 'border-b-primary dark:border-b-secondary'}`}>
                 <img src={avatar} className="h-8 w-8 rounded-full object-cover shadow-sm" />
@@ -96,6 +96,7 @@ function RatingDialog({
 }) {
     const [rating, setRating] = useState<Rating>();
     const [feedback, setFeedback] = useState('');
+    console.log('rating dialog rendered');
     
     return (
         <AlertDialog open={isOpen} onOpenChange={onClose}>
@@ -124,7 +125,7 @@ function RatingDialog({
                     placeholder="Any additional feedback?"
                     value={feedback}
                     onChange={(e) => setFeedback(e.target.value)}
-                    className="min-h-[100px]"
+                    className="min-h-[100px] resize-none"
                 />
                 
                 <AlertDialogFooter>
@@ -148,22 +149,29 @@ export default function ChatPage() {
     const router = useRouter();
     const [showRating, setShowRating] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const messageContainerRef = useRef<HTMLDivElement>(null);
 
     console.log('Chat page rendered');
 
     const id = searchParams.get('id');
     const conversation = id ? loadConvo(id!) : null;
 
+    const scrollToBottom = useCallback((behavior: 'auto' | 'smooth' = 'auto') => {
+        if (messageContainerRef.current) {
+            messageContainerRef.current.scrollTo({ top: messageContainerRef.current.scrollHeight, behavior })
+        }
+    }, [])
+
     useEffect(() => {
         if (!id || id.length === 0 || !conversation) {
             router.push('/');
             return;
         } else if (isLoading) { // So there's no flash of loading if fast-loads
-            const timer = setTimeout(() => {
+            setTimeout(() => {
                 setIsLoading(false);
+                setTimeout(scrollToBottom, 100);
             }, 100);
     
-            return () => clearTimeout(timer);
         }
 
     }, [id, conversation, router]);
@@ -205,6 +213,7 @@ export default function ChatPage() {
         };
 
         const updatedConvo = newMessage(conversation, userMessage);
+        setTimeout(() => scrollToBottom('smooth'), 100);
 
         setTimeout(() => { // Mocking an AI response, later could make it look streamed like in chatGPT
             const modelMessage: ChatMessage = {
@@ -214,6 +223,7 @@ export default function ChatPage() {
                 liked: 0
             };
             newMessage(updatedConvo, modelMessage);
+            setTimeout(() => scrollToBottom('smooth'), 100);
         }, 1000);
 
     }
@@ -230,7 +240,7 @@ export default function ChatPage() {
 
     return (
         <main className="container page-height px-4 pb-1 flex flex-col justify-end overflow-hidden">
-            <div className="flex-1 overflow-y-auto spacing-y-4">
+            <div className="flex-1 overflow-y-auto spacing-y-4" ref={messageContainerRef}>
                 {conversation.chat.map((message) => (
                     <MessageBubble
                         key={message.timestamp}
