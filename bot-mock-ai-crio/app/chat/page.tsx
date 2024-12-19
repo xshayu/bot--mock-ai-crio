@@ -1,11 +1,13 @@
 'use client';
 
+// Page is wrapped in suspense boundary
+
 import RatingDialog from "./ratingDialog";
 import MessageBubble from "./messageBubble";
 import { useConvoStore, useConvos } from "@/stores/useConvoStore";
 import { Star, LoaderCircle } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { dayjs } from '@/lib/utils';
 import ChatForm from "@/components/chatForm";
 import { DATE_FORMATS } from "@/models";
@@ -24,7 +26,7 @@ const responseOnNewQuestion = (userQuery: string) => {
     return matchingPrompt?.response || "As a (mock) AI model, I cannot answer that.";
 };
 
-export default function ChatPage() {
+function ChatPageContent() {
     const { loadConvo } = useConvos();
     const { newMessage, updateMessageLike, finishConvo } = useConvoStore();
     const searchParams = useSearchParams();
@@ -169,5 +171,17 @@ export default function ChatPage() {
                 onSubmit={handleRatingSubmit}
             />
         </main>
+    )
+};
+
+export default function ChatPage() {
+    return (
+        <Suspense fallback={
+            <main className="page-height flex items-center justify-center">
+                <LoaderCircle className="animate-spin" />
+            </main>
+        }>
+            <ChatPageContent />
+        </Suspense>
     )
 }
