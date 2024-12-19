@@ -19,7 +19,7 @@ const MessageBubble = memo(({
 
     return (
         <div
-            className={`p-4 rounded-lg max-w-[80%] mx-auto my-4 group shadow-md ${isUser ? 'bg-secondary text-secondary-foreground' : 'bg-[var(--theme)] text-primary dark:text-secondary'}`}
+            className={`p-2 md:p-4 rounded-lg text-sm md:text-base md:max-w-[80%] mx-auto my-4 group shadow-md ${isUser ? 'bg-secondary text-secondary-foreground' : 'bg-[var(--theme)] text-primary dark:text-secondary'}`}
         >
             <div className={`border-b-[0.5px] pb-6 flex gap-4 ${isUser ? 'border-b-muted-foreground' : 'border-b-primary dark:border-b-secondary'}`}>
                 <img src={avatar} className="h-8 w-8 rounded-full object-cover shadow-sm" />

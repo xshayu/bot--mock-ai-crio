@@ -44,13 +44,13 @@ export default function ChatInitiator({ prompts }: ChatInitiatorProps) {
                 !randomPrompts.length ?
                 <LoaderCircle className="mx-auto my-6 animate-spin" />
                 :
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-2 md:p-4">
                     {
                         randomPrompts.map(prompt =>
                             <button
                                 key={prompt.id}
                                 onClick={() => handleInitiation(prompt.question)}
-                                className="rounded-lg shadow-sm bg-muted p-4 hover:shadow-md transition-shadow cursor-pointer">
+                                className="rounded-lg shadow-sm bg-muted p-2 md:p-4 text-sm md:text-base hover:shadow-md transition-shadow cursor-pointer">
                                 <h2 className="font-medium mb-2">
                                     {prompt.question}
                                 </h2>
