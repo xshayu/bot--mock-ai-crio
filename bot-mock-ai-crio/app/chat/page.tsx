@@ -1,11 +1,11 @@
 'use client';
 
-import { RatingDialog } from "./ratingDialog";
-import { MessageBubble } from "./messageBubble";
+import RatingDialog from "./ratingDialog";
+import MessageBubble from "./messageBubble";
 import { useConvoStore, useConvos } from "@/stores/useConvoStore";
 import { Star, LoaderCircle } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useEffect, memo, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { dayjs } from '@/lib/utils';
 import ChatForm from "@/components/chatForm";
 import { DATE_FORMATS } from "@/models";
@@ -32,8 +32,6 @@ export default function ChatPage() {
     const [showRating, setShowRating] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const messageContainerRef = useRef<HTMLDivElement>(null);
-
-    console.log('Chat page rendered');
 
     const id = searchParams.get('id');
     const conversation = id ? loadConvo(id!) : null;

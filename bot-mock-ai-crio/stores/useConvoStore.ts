@@ -27,7 +27,6 @@ export const useConvoStore = create<ConvoStoreState>()(
             getAllConvos: (page = 1, rating) => {
                 let filteredConvos = get().convos;
                 if (typeof rating == 'number' && !Number.isNaN(NaN)) {
-                    console.log('is number');
                     filteredConvos = filteredConvos.filter((conv) => conv.review?.rating && (conv.review.rating >= rating!));
                 };
                 
@@ -68,7 +67,6 @@ export const useConvoStore = create<ConvoStoreState>()(
             },
 
             loadConvo: (id) => {
-                console.log('this convo has been loaded');
                 return get().convos.find((convo) => convo.id === id);
             },
 

@@ -2,15 +2,15 @@ import { DATE_FORMATS } from "@/models";
 import { dayjs } from '@/lib/utils';
 import type { ChatMessage } from '@/models';
 import { ThumbsUp, ThumbsDown } from 'lucide-react';
+import { memo } from 'react';
 
-export function MessageBubble({
+const MessageBubble = memo(({
     message,
     onLike
 }: {
     message: ChatMessage;
     onLike?: (liked: -1 | 0 | 1) => void;
-}) {
-    console.log('message bubble rendered');
+}) => {
     const isUser = message.by === 'user';
     const avatar = isUser ?
         'https://avatars.githubusercontent.com/u/45749740?s=400&v=4'
@@ -52,4 +52,12 @@ export function MessageBubble({
             </div>
         </div>
     );
-}
+}, (prevProps, nextProps) => {
+    if ('liked' in prevProps.message && 'liked' in nextProps.message) { // checking if it's model message
+        return prevProps.message.liked === nextProps.message.liked 
+            && prevProps.message.text === nextProps.message.text;
+    }
+    return prevProps.message.text === nextProps.message.text;
+});
+
+export default MessageBubble;

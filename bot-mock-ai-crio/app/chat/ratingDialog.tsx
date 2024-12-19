@@ -11,10 +11,10 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Star } from 'lucide-react';
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import type { Rating } from "@/models";
 
-export function RatingDialog({ 
+const RatingDialog = memo(({ 
     isOpen, 
     onClose,
     onSubmit 
@@ -22,10 +22,9 @@ export function RatingDialog({
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (rating: Rating, feedback: string) => void;
-}) {
+}) => {
     const [rating, setRating] = useState<Rating>();
     const [feedback, setFeedback] = useState('');
-    console.log('rating dialog rendered');
     
     return (
         <AlertDialog open={isOpen} onOpenChange={onClose}>
@@ -69,4 +68,8 @@ export function RatingDialog({
             </AlertDialogContent>
         </AlertDialog>
     );
-};
+}, (prevProps, nextProps) => {
+    return prevProps.isOpen === nextProps.isOpen;
+});
+
+export default RatingDialog;

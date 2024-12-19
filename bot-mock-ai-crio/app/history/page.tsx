@@ -32,7 +32,6 @@ export default function History() {
 
     useEffect(() => {
         const result = getAllConvos(currentPage, selectedRating);
-        console.log({result});
         setPaginatedConvos(result);
     }, [currentPage, selectedRating, getAllConvos]);
 
